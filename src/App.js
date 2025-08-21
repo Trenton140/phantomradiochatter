@@ -39,22 +39,22 @@ function BandMembers() {
   // Place member photos in public/photos/member1.jpg, member2.jpg, member3.jpg
   const members = [
     {
-      name: 'Mark Duch Koetsier',
-      role: 'Vocals & Guitar',
-      bio: 'A short writeup about Mark Duch Koetsier. Passionate about music and the band.',
-      photo: 'Mark Duch Koetsier.jpg',
-    },
-    {
       name: 'Michael Bennett Leroux',
-      role: 'Bass Guitar',
-      bio: 'A short writeup about Michael Bennett Leroux. Loves groovy bass lines and live shows.',
+      role: 'Vocals & Guitar',
+      bio: 'A short writeup about Michael Bennett Leroux. Passionate about music and the band.',
       photo: 'Michael Bennett Leroux.jpg',
     },
     {
       name: 'Owen McLaughlin',
-      role: 'Drums',
-      bio: 'A short writeup about Owen McLaughlin. Keeps the beat and brings the energy.',
+      role: 'Bass Guitar',
+      bio: 'A short writeup about Owen McLaughlin. Loves groovy bass lines and live shows.',
       photo: 'Owen McLaughlin.jpg',
+    },
+    {
+      name: 'Mark Duch Koetsier',
+      role: 'Drums',
+      bio: 'A short writeup about Mark Duch Koetsier. Keeps the beat and brings the energy.',
+      photo: 'Mark Duch Koetsier.jpg',
     },
   ];
   const [modalOpen, setModalOpen] = React.useState(false);
