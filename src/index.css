@@ -14,6 +14,20 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Stop iOS inflating text in landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Keep the layout still when the lightbox locks scrolling. */
+  scrollbar-gutter: stable;
+}
+
+/* Don't let the page scroll behind an open lightbox. */
+html:has(.lightbox[open]) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   background: var(--color-background);
@@ -26,6 +40,12 @@ body {
 button {
   font: inherit;
   cursor: pointer;
+}
+
+/* Removes the double-tap-to-zoom delay on controls. */
+a,
+button {
+  touch-action: manipulation;
 }
 
 :focus-visible {
@@ -64,24 +84,26 @@ button {
 .navbar a::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: var(--underline-offset, 0);
+  left: var(--link-padding, 0em);
   width: 0;
   height: 2px;
   background: var(--color-accent);
   transition: width 0.3s;
 }
 
-.navbar a:hover {
+/* The current page keeps its underline. */
+.navbar-links a[aria-current='page']::after {
+  width: calc(100% - 2 * var(--link-padding, 0em));
+}
+
+.navbar a:active {
   color: var(--color-text);
 }
 
-.navbar a:hover::after {
-  width: 100%;
-}
-
 .navbar a.navbar-brand {
-  font-size: 2.42em;
+  /* Scales down so the name stays on one line on phones. */
+  font-size: clamp(1.5rem, 7.6vw, 2.42em);
   letter-spacing: 2px;
   text-align: center;
 }
@@ -98,7 +120,7 @@ button {
   transition: color 0.2s;
 }
 
-.social-links a:hover {
+.social-links a:active {
   color: var(--color-text);
 }
 
@@ -120,7 +142,8 @@ button {
 
 .page-title--home {
   margin: 0.67em 0;
-  font-size: 2em;
+  /* Scales down so the name stays on one line on phones. */
+  font-size: clamp(1.5rem, 7.5vw, 2em);
 }
 
 .location {
@@ -193,6 +216,8 @@ button {
 
 .lightbox[open] {
   display: flex;
+  /* Sideways swipes change the photo instead of triggering the browser's back gesture. */
+  touch-action: pinch-zoom;
   align-items: center;
   justify-content: center;
   width: 100vw;
@@ -207,6 +232,7 @@ button {
 }
 
 .lightbox-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -229,7 +255,8 @@ button {
   /* 90vw, but never wider than the viewport once the card padding is added. */
   max-width: min(90vw, 100vw - 4em);
   height: auto;
-  max-height: 80dvh;
+  /* 80% of the screen height, less on short screens so Close stays visible. */
+  max-height: min(80dvh, 100dvh - 11em);
   border-radius: 10px;
   transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -285,15 +312,10 @@ button {
   right: 0;
 }
 
-.lightbox-arrow:hover {
+.lightbox-arrow:active {
   border-color: var(--color-text);
   background: var(--color-accent);
   color: var(--color-surface);
-}
-
-/* Arrows fade away when the pointer rests, but stay reachable by keyboard. */
-.lightbox-stage.is-idle .lightbox-arrow:not(:focus-visible) {
-  opacity: 0;
 }
 
 .lightbox-close {
@@ -307,8 +329,154 @@ button {
   transition: background 0.2s;
 }
 
-.lightbox-close:hover {
+.lightbox-close:active {
   background: var(--color-text);
+}
+
+/* ---------- Mouse-only behaviour ---------- */
+
+/* Hover styles are limited to devices that really hover, so they don't stick after a tap. */
+@media (hover: hover) {
+  .navbar a:hover,
+  .social-links a:hover {
+    color: var(--color-text);
+  }
+
+  .navbar a:hover::after {
+    width: calc(100% - 2 * var(--link-padding, 0em));
+  }
+
+  .lightbox-arrow:hover {
+    border-color: var(--color-text);
+    background: var(--color-accent);
+    color: var(--color-surface);
+  }
+
+  .lightbox-close:hover {
+    background: var(--color-text);
+  }
+
+  /* Arrows fade away when the pointer rests, but stay reachable by keyboard. */
+  .lightbox-stage.is-idle .lightbox-arrow:not(:focus-visible) {
+    opacity: 0;
+  }
+}
+
+/* ---------- Touch targets ---------- */
+
+/* Finger-sized (44px+) controls on phones and any other touch screen. */
+@media (max-width: 600px), (pointer: coarse) {
+  .navbar-links {
+    gap: 0 0.5em;
+  }
+
+  .navbar-links a {
+    --link-padding: 0.6em;
+    --underline-offset: 8px;
+
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--link-padding);
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0;
+  }
+
+  .lightbox-close {
+    min-width: 88px;
+    min-height: 44px;
+  }
+}
+
+/* ---------- Phone layout ---------- */
+
+/* A compact header for phones, in portrait or landscape. */
+@media (max-width: 600px), (max-height: 500px) {
+  .navbar {
+    gap: 0.5em;
+    padding: 1.25em 0.5em 0.25em;
+  }
+
+  .social-links {
+    margin: 0.5em 0 0.75em;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    margin: 0.75em;
+    padding: 1.25em;
+  }
+
+  .page-title {
+    margin-top: 0.25em;
+  }
+
+  .members {
+    margin-top: 1.25em;
+  }
+
+  .member:last-child {
+    margin-bottom: 0.5em;
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75em;
+  }
+
+  .photo-item {
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  /* Give the photo nearly the full screen width. */
+  .lightbox-content {
+    gap: 0.75em;
+    padding: 0.75em;
+  }
+
+  .lightbox-photo {
+    max-width: calc(100vw - 2.5em);
+    max-height: 70dvh;
+  }
+
+  /* Move the arrows off the photo and down beside the Close button. */
+  .lightbox-stage {
+    position: static;
+  }
+
+  .lightbox-arrow {
+    top: auto;
+    bottom: 0.75rem;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    transform: none;
+    box-shadow: none;
+    font-size: 2em;
+  }
+
+  .lightbox-arrow--prev {
+    left: 0.75rem;
+  }
+
+  .lightbox-arrow--next {
+    right: 0.75rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

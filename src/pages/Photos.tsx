@@ -16,6 +16,7 @@ export function Photos() {
             key={photo.src}
             photo={photo}
             className="photo-item"
+            sizes="(max-width: 600px) 80vw, 330px"
             onClick={() => setOpenIndex(index)}
           />
         ))}

@@ -43,8 +43,9 @@ vercel.json           Vercel build settings, SPA fallback, cache and security he
 ## Common edits
 
 - **Band members, social links, navigation, gallery photos** — edit `src/data/site.ts`.
-- **Add a photo** — drop it in `src/assets/photos/`, import it in `src/data/site.ts` and add it to
-  `GALLERY`.
+- **Add a photo** — drop it in `src/assets/photos/`, import it in `src/data/site.ts` the same way
+  as the existing ones (once as-is, once with the `?w=…&as=srcset` suffix that generates the small
+  phone-sized versions) and add it to `GALLERY`.
 - **Add a page** — create a component in `src/pages/`, register it in `src/routes.tsx` and add a
   link to `NAV_ITEMS`.
 - **Link-preview image** — replace `public/photos/og-cover.jpg` (keep the file name; it is

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent, MouseEvent, WheelEvent } from 'react';
+import type { KeyboardEvent, MouseEvent, TouchEvent, WheelEvent } from 'react';
 
 import type { Photo } from '../data/site';
 
 /** Must match the opacity transition on `.lightbox-photo`. */
 const FADE_MS = 250;
 const ARROW_IDLE_MS = 1000;
+/** How far a finger must travel sideways to count as a swipe. */
+const SWIPE_MIN_PX = 40;
 
 interface LightboxProps {
   photos: readonly Photo[];
@@ -18,14 +20,15 @@ interface LightboxProps {
 /**
  * Full-screen photo viewer built on a native modal <dialog>, which provides
  * the focus trap, Escape-to-close and focus restoration. With more than one
- * photo it also shows previous/next arrows and responds to the arrow keys and
- * the mouse wheel.
+ * photo it also shows previous/next arrows and responds to the arrow keys,
+ * the mouse wheel and left/right swipes.
  */
 export function Lightbox({ photos, initialIndex = 0, caption, onClose }: LightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const fadeTimer = useRef<number | undefined>(undefined);
   const idleTimer = useRef<number | undefined>(undefined);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const [index, setIndex] = useState(initialIndex);
   const [fading, setFading] = useState(false);
@@ -78,6 +81,28 @@ export function Lightbox({ photos, initialIndex = 0, caption, onClose }: Lightbo
     if (event.deltaY !== 0) step(event.deltaY < 0 ? -1 : 1);
   };
 
+  const handleTouchStart = (event: TouchEvent) => {
+    const touch = event.touches[0];
+    // Ignore multi-finger gestures so pinch-zoom keeps working.
+    touchStart.current =
+      event.touches.length === 1 && touch ? { x: touch.clientX, y: touch.clientY } : null;
+  };
+
+  const handleTouchEnd = (event: TouchEvent) => {
+    const start = touchStart.current;
+    const touch = event.changedTouches[0];
+    touchStart.current = null;
+    if (!start || !touch) return;
+    // While zoomed in, dragging pans the photo rather than changing it.
+    if ((window.visualViewport?.scale ?? 1) > 1) return;
+
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+    if (Math.abs(deltaX) >= SWIPE_MIN_PX && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      step(deltaX < 0 ? 1 : -1);
+    }
+  };
+
   const handleBackdropClick = (event: MouseEvent) => {
     if (event.target === event.currentTarget) close();
   };
@@ -95,6 +120,8 @@ export function Lightbox({ photos, initialIndex = 0, caption, onClose }: Lightbo
       onKeyDown={handleKeyDown}
       onWheel={handleWheel}
       onMouseMove={wake}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="lightbox-content">
         <div className={idle ? 'lightbox-stage is-idle' : 'lightbox-stage'}>
@@ -111,6 +138,8 @@ export function Lightbox({ photos, initialIndex = 0, caption, onClose }: Lightbo
           <img
             className={fading ? 'lightbox-photo is-fading' : 'lightbox-photo'}
             src={photo.src}
+            srcSet={photo.srcSet}
+            sizes="90vw"
             alt={photo.alt}
             width={photo.width}
             height={photo.height}

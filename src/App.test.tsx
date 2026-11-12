@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -70,5 +70,23 @@ describe('photo lightbox', () => {
 
     await user.click(within(dialog).getByRole('button', { name: 'Close' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('changes photo on a sideways swipe but not on a vertical one', async () => {
+    const user = userEvent.setup();
+    renderAt('/photos');
+
+    const [first, second] = GALLERY;
+    await user.click(screen.getByRole('button', { name: `View photo: ${first!.alt}` }));
+    const dialog = screen.getByRole('dialog');
+
+    fireEvent.touchStart(dialog, { touches: [{ clientX: 200, clientY: 300 }] });
+    fireEvent.touchEnd(dialog, { changedTouches: [{ clientX: 210, clientY: 100 }] });
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(within(dialog).getByRole('img')).toHaveAccessibleName(first!.alt);
+
+    fireEvent.touchStart(dialog, { touches: [{ clientX: 300, clientY: 300 }] });
+    fireEvent.touchEnd(dialog, { changedTouches: [{ clientX: 100, clientY: 310 }] });
+    expect(await within(dialog).findByRole('img', { name: second!.alt })).toBeVisible();
   });
 });

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Lightbox } from '../components/Lightbox';
 import { Page } from '../components/Page';
 import { PhotoButton } from '../components/PhotoButton';
-import { BAND_MEMBERS } from '../data/site';
+import { BAND_MEMBERS, FRAMED_PHOTO_SIZES } from '../data/site';
 import type { BandMember } from '../data/site';
 
 export function BandMembers() {
@@ -17,6 +17,7 @@ export function BandMembers() {
             <PhotoButton
               photo={member.photo}
               className="framed-photo"
+              sizes={FRAMED_PHOTO_SIZES}
               eager={index === 0}
               onClick={() => setSelected(member)}
             />

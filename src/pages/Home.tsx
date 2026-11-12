@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Lightbox } from '../components/Lightbox';
 import { Page } from '../components/Page';
 import { PhotoButton } from '../components/PhotoButton';
-import { GROUP_PHOTO, LOCATION, SITE_NAME } from '../data/site';
+import { FRAMED_PHOTO_SIZES, GROUP_PHOTO, LOCATION, SITE_NAME } from '../data/site';
 
 export function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -13,6 +13,7 @@ export function Home() {
       <PhotoButton
         photo={GROUP_PHOTO}
         className="framed-photo"
+        sizes={FRAMED_PHOTO_SIZES}
         eager
         onClick={() => setLightboxOpen(true)}
       />
