@@ -1,13 +1,320 @@
+:root {
+  --color-accent: #b30000;
+  --color-text: #222;
+  --color-surface: #fff;
+  --color-background: #fafafa;
+  --shadow-accent-sm: 0 1px 4px rgb(179 0 0 / 10%);
+  --shadow-accent-lg: 0 2px 16px rgb(179 0 0 / 10%);
+  --font-body: 'Oswald Variable', Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ---------- */
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3em;
+  padding: 2em 1em 0.5em;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.navbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5em 2em;
+}
+
+.navbar a {
+  position: relative;
+  padding-bottom: 2px;
+  color: var(--color-accent);
+  font-size: 1.1em;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navbar a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-accent);
+  transition: width 0.3s;
+}
+
+.navbar a:hover {
+  color: var(--color-text);
+}
+
+.navbar a:hover::after {
+  width: 100%;
+}
+
+.navbar a.navbar-brand {
+  font-size: 2.42em;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.social-links {
+  margin: 1em 0 2em;
+  text-align: center;
+}
+
+.social-links a {
+  margin: 0 10px;
+  color: var(--color-accent);
+  font-size: 2em;
+  transition: color 0.2s;
+}
+
+.social-links a:hover {
+  color: var(--color-text);
+}
+
+/* ---------- Page card ---------- */
+
+.page {
+  max-width: 764px;
+  margin: 2em auto;
+  padding: 2em;
+  border-radius: 8px;
+  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgb(179 0 0 / 8%);
+}
+
+.page-title {
+  margin: 0.83em 0;
+  font-size: 1.5em;
+}
+
+.page-title--home {
+  margin: 0.67em 0;
+  font-size: 2em;
+}
+
+.location {
+  margin-top: 1em;
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+/* ---------- Photos ---------- */
+
+.photo-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.photo-button img {
+  display: block;
+  width: 100%;
+}
+
+.framed-photo {
+  margin-bottom: 1em;
+  border: 2.5px solid var(--color-accent);
+  border-radius: 12px;
+  box-shadow: var(--shadow-accent-lg);
+}
+
+.framed-photo img {
+  height: auto;
+}
+
+.members {
+  margin-top: 2em;
+}
+
+.member {
+  margin-bottom: 2.5em;
+  text-align: center;
+}
+
+.member-name {
+  margin: 1em 0 0.2em;
+  color: var(--color-accent);
+  font-size: 1.17em;
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.photo-item {
+  height: 184px;
+  border: 2px solid var(--color-accent);
+  border-radius: 6px;
+  box-shadow: var(--shadow-accent-sm);
+}
+
+.photo-item img {
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Lightbox ---------- */
+
+.lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(0 0 0 / 85%);
+  color: inherit;
+}
+
+.lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  padding: 1.5em;
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 4px 24px rgb(0 0 0 / 25%);
+}
+
+.lightbox-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-photo {
+  width: auto;
+  /* 90vw, but never wider than the viewport once the card padding is added. */
+  max-width: min(90vw, 100vw - 4em);
+  height: auto;
+  max-height: 80dvh;
+  border-radius: 10px;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lightbox-photo.is-fading {
+  opacity: 0;
+}
+
+.lightbox-caption {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 4px;
+  transform: translateY(-50%);
+  border: 2px solid var(--color-accent);
+  border-radius: 8px;
+  background: var(--color-surface);
+  /* The white ring matches the old 64px box the arrow used to sit in. */
+  box-shadow:
+    0 0 0 4px var(--color-surface),
+    0 2px 8px 4px rgb(179 0 0 / 10%);
+  color: var(--color-accent);
+  font-family: Arial, sans-serif;
+  font-size: 2.7em;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.95;
+  user-select: none;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border 0.2s,
+    opacity 0.2s;
+}
+
+.lightbox-arrow--prev {
+  left: 0;
+}
+
+.lightbox-arrow--next {
+  right: 0;
+}
+
+.lightbox-arrow:hover {
+  border-color: var(--color-text);
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
+/* Arrows fade away when the pointer rests, but stay reachable by keyboard. */
+.lightbox-stage.is-idle .lightbox-arrow:not(:focus-visible) {
+  opacity: 0;
+}
+
+.lightbox-close {
+  padding: 0.5em 1.2em;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  font-size: 1em;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.lightbox-close:hover {
+  background: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
 }
