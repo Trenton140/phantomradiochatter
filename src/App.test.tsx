@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
 
-import { BAND_MEMBERS, GALLERY, NAV_ITEMS } from './data/site';
+import { GALLERY, NAV_ITEMS } from './data/site';
 import { routes } from './routes';
 
 function renderAt(path: string) {
@@ -38,13 +38,36 @@ describe('site', () => {
     expect(document.title).toBe('Tour Dates | Phantom Radio Chatter');
   });
 
-  it('lists every band member', () => {
-    renderAt('/band-members');
+  it('only links to the pages that exist', () => {
+    renderAt('/');
 
-    for (const { name, role } of BAND_MEMBERS) {
-      expect(screen.getByRole('heading', { level: 2, name })).toBeVisible();
-      expect(screen.getByText(role)).toBeVisible();
-    }
+    const nav = screen.getByRole('navigation', { name: 'Main' });
+    expect(
+      within(nav)
+        .getAllByRole('link')
+        .map((link) => link.textContent),
+    ).toEqual(['Home', 'Tour Dates', 'Watch', 'Listen', 'Photos']);
+  });
+
+  it('shows the Bandsintown widget on the tour dates page', () => {
+    renderAt('/tour-dates');
+
+    const placeholder = document.querySelector('.bit-widget-initializer');
+    expect(placeholder).toHaveAttribute('data-artist-name', 'id_15608715');
+    expect(document.querySelector('script[src*="bandsintown.com"]')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'See all shows on Bandsintown' })).toHaveAttribute(
+      'href',
+      'https://www.bandsintown.com/a/15608715-phantom-radio-chatter',
+    );
+  });
+
+  it('embeds the YouTube playlist on the watch page', () => {
+    renderAt('/watch');
+
+    expect(screen.getByTitle('Phantom Radio Chatter videos on YouTube')).toHaveAttribute(
+      'src',
+      'https://www.youtube-nocookie.com/embed/videoseries?list=PLsKAr2oWG0-gCmpVh65V7FEhCfOl4yS9I',
+    );
   });
 
   it('shows a not-found page for unknown URLs', () => {

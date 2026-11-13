@@ -16,6 +16,12 @@ import owenSrcSet from '../assets/photos/owen-mclaughlin.jpg?w=480;800;1200;1600
 export const SITE_NAME = 'Phantom Radio Chatter';
 export const LOCATION = 'Toronto, Ontario, Canada';
 export const YOUTUBE_URL = 'https://www.youtube.com/@PhantomRadioChatter';
+/** The playlist embedded on the Watch page. */
+export const YOUTUBE_PLAYLIST_ID = 'PLsKAr2oWG0-gCmpVh65V7FEhCfOl4yS9I';
+
+/** The band's Bandsintown artist page, the source of the Tour Dates page. */
+export const BANDSINTOWN_ARTIST_ID = '15608715';
+export const BANDSINTOWN_URL = `https://www.bandsintown.com/a/${BANDSINTOWN_ARTIST_ID}-phantom-radio-chatter`;
 
 export interface Photo {
   src: string;
@@ -35,38 +41,7 @@ const photo = (src: string, srcSet: string, alt: string): Photo => ({
   height: 1152,
 });
 
-/** Display width of the large framed photos: full width on phones, 700px otherwise. */
-export const FRAMED_PHOTO_SIZES = '(max-width: 600px) calc(100vw - 4em), 700px';
-
 export const GROUP_PHOTO = photo(groupPhoto, groupSrcSet, SITE_NAME);
-
-export interface BandMember {
-  name: string;
-  role: string;
-  bio: string;
-  photo: Photo;
-}
-
-export const BAND_MEMBERS: readonly BandMember[] = [
-  {
-    name: 'Michael Bennett Leroux',
-    role: 'Vocals & Guitar',
-    bio: 'A short writeup about Michael Bennett Leroux. Passionate about music and the band.',
-    photo: photo(michaelPhoto, michaelSrcSet, 'Michael Bennett Leroux'),
-  },
-  {
-    name: 'Owen McLaughlin',
-    role: 'Bass Guitar',
-    bio: 'A short writeup about Owen McLaughlin. Loves groovy bass lines and live shows.',
-    photo: photo(owenPhoto, owenSrcSet, 'Owen McLaughlin'),
-  },
-  {
-    name: 'Mark Duch Koetsier',
-    role: 'Drums',
-    bio: 'A short writeup about Mark Duch Koetsier. Keeps the beat and brings the energy.',
-    photo: photo(markPhoto, markSrcSet, 'Mark Duch Koetsier'),
-  },
-];
 
 /** Photos page gallery, in display order. */
 export const GALLERY: readonly Photo[] = [
@@ -83,12 +58,10 @@ export interface NavItem {
 
 export const NAV_ITEMS: readonly NavItem[] = [
   { to: '/', label: 'Home' },
-  { to: '/band-members', label: 'Band Members' },
   { to: '/tour-dates', label: 'Tour Dates' },
   { to: '/watch', label: 'Watch' },
   { to: '/listen', label: 'Listen' },
   { to: '/photos', label: 'Photos' },
-  { to: '/blog', label: 'Blog' },
 ];
 
 export interface SocialLink {

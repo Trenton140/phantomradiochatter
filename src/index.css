@@ -178,21 +178,6 @@ button {
   height: auto;
 }
 
-.members {
-  margin-top: 2em;
-}
-
-.member {
-  margin-bottom: 2.5em;
-  text-align: center;
-}
-
-.member-name {
-  margin: 1em 0 0.2em;
-  color: var(--color-accent);
-  font-size: 1.17em;
-}
-
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -210,6 +195,23 @@ button {
 .photo-item img {
   height: 100%;
   object-fit: cover;
+}
+
+/* ---------- Embeds ---------- */
+
+.video-embed {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 12px;
+  background: #000;
+}
+
+/* Reserves room while the Bandsintown widget loads. */
+.tour-widget {
+  min-height: 12em;
 }
 
 /* ---------- Lightbox ---------- */
@@ -416,6 +418,15 @@ button {
 }
 
 @media (max-width: 600px) {
+  /* Tighter links so the whole menu fits on one row on most phones. */
+  .navbar-links {
+    gap: 0 0.25em;
+  }
+
+  .navbar-links a {
+    --link-padding: 0.45em;
+  }
+
   .page {
     margin: 0.75em;
     padding: 1.25em;
@@ -423,14 +434,6 @@ button {
 
   .page-title {
     margin-top: 0.25em;
-  }
-
-  .members {
-    margin-top: 1.25em;
-  }
-
-  .member:last-child {
-    margin-bottom: 0.5em;
   }
 
   .photos-grid {
